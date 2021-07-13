@@ -1,26 +1,32 @@
-import "./scss/index.scss";
-
+import { useAuth } from "@saleor/sdk";
 import * as React from "react";
 import { useIntl } from "react-intl";
 
-import { useSignIn } from "@saleor/sdk";
 import { demoMode } from "@temp/constants";
 import { commonMessages } from "@temp/intl";
-import { maybe } from "@utils/misc";
 
 import { Button, Form, TextField } from "..";
+
+import "./scss/index.scss";
 
 interface ILoginForm {
   hide?: () => void;
 }
 
 const LoginForm: React.FC<ILoginForm> = ({ hide }) => {
-  const [signIn, { loading, error }] = useSignIn();
+  const { signIn } = useAuth();
+  const [loading, setLoading] = React.useState(false);
+  const [errors, setErrors] = React.useState(null);
 
   const handleOnSubmit = async (evt, { email, password }) => {
     evt.preventDefault();
-    const authenticated = await signIn({ email, password });
-    if (authenticated && hide) {
+    setLoading(true);
+    const { data, dataError } = await signIn(email, password);
+    setLoading(false);
+    if (dataError?.error) {
+      setErrors(dataError.error);
+    } else if (data && hide) {
+      setErrors(null);
       hide();
     }
   };
@@ -36,11 +42,7 @@ const LoginForm: React.FC<ILoginForm> = ({ hide }) => {
 
   return (
     <div className="login-form">
-      <Form
-        data={formData}
-        errors={maybe(() => error.extraInfo.userInputErrors, [])}
-        onSubmit={handleOnSubmit}
-      >
+      <Form data={formData} errors={errors || []} onSubmit={handleOnSubmit}>
         <TextField
           name="email"
           autoComplete="email"

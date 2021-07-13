@@ -1,10 +1,9 @@
+import { useAccountUpdate, useAuth } from "@saleor/sdk";
 import React from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
-import { commonMessages } from "@temp/intl";
-import { useAccountUpdate, useUserDetails } from "@saleor/sdk";
-
 import { Attribute, IconButton, Tile } from "@components/atoms";
+import { commonMessages } from "@temp/intl";
 
 import { AccountUpdateForm } from "./AccountUpdateForm";
 import * as S from "./styles";
@@ -12,8 +11,8 @@ import * as S from "./styles";
 export const AccountTile: React.FC = () => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [setAccountUpdate, { data, error }] = useAccountUpdate();
-  const { data: user } = useUserDetails();
   const intl = useIntl();
+  const { user } = useAuth();
 
   React.useEffect(() => {
     if (data && !error) {
@@ -53,14 +52,16 @@ export const AccountTile: React.FC = () => {
                 }}
               />
             ) : (
-              <S.ContentOneLine>
+              <S.ContentOneLine data-test="personalDetailsSection">
                 <Attribute
                   description={intl.formatMessage(commonMessages.firstName)}
                   attributeValue={(user && user.firstName) || "-"}
+                  testingContext="firstNameText"
                 />
                 <Attribute
                   description={intl.formatMessage(commonMessages.lastName)}
                   attributeValue={(user && user.lastName) || "-"}
+                  testingContext="lastNameText"
                 />
               </S.ContentOneLine>
             )}

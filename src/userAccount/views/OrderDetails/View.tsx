@@ -1,23 +1,20 @@
-import "./scss/index.scss";
-
+import { useAuth, useOrderDetails } from "@saleor/sdk";
+import { NextPage } from "next";
 import * as React from "react";
-import { RouteComponentProps } from "react-router";
 
 import { Loader } from "@components/atoms";
-import { useOrderDetails, useUserDetails } from "@saleor/sdk";
 
 import Page from "./Page";
+import { IProps } from "./types";
 
-const View: React.FC<RouteComponentProps<{ token?: string }>> = ({
-  match: {
-    params: { token },
-  },
-}) => {
+import "./scss/index.scss";
+
+const View: NextPage<IProps> = ({ query: { token } }) => {
   const { data: order, loading } = useOrderDetails(
     { token },
-    { fetchPolicy: "cache-and-network" }
+    { fetchPolicy: "cache-first" }
   );
-  const { data: user } = useUserDetails();
+  const { user } = useAuth();
   const guest = !user;
 
   const handleDownloadInvoice = () => {
@@ -33,11 +30,9 @@ const View: React.FC<RouteComponentProps<{ token?: string }>> = ({
     }
   };
 
-  if (loading) {
-    return <Loader />;
-  }
-
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <div className="order-details container">
       <Page
         guest={guest}

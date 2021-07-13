@@ -13,6 +13,12 @@ export const commonMessages = defineMessages({
   noItemsAvailable: {
     defaultMessage: "No items available",
   },
+  noPurchaseAvailable: {
+    defaultMessage: "Not available for purchase",
+  },
+  purchaseAvailableOn: {
+    defaultMessage: `Will become available for purchase on {date} at {time}`,
+  },
   youMightLike: {
     defaultMessage: "You might like",
   },
@@ -120,6 +126,9 @@ export const commonMessages = defineMessages({
   },
   cancel: {
     defaultMessage: "Cancel",
+  },
+  home: {
+    defaultMessage: "Home",
   },
 });
 
